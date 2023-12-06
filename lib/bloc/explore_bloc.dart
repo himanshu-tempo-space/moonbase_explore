@@ -9,7 +9,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:moonbase_explore/bloc/hashtags/hastags_bloc.dart';
 import 'package:moonbase_explore/bloc/monetization_bloc/monetization_bloc.dart';
+import 'package:moonbase_explore/bloc/quizzes_bloc/quizzes_bloc.dart';
 import 'package:moonbase_explore/model/explore_data_models.dart';
+import 'package:moonbase_explore/model/quiz_model.dart';
 import 'package:moonbase_explore/model/user_short_info.dart';
 import 'package:tempo_location_service/tempo_location_service.dart';
 import 'package:uuid/uuid.dart';
@@ -45,13 +47,16 @@ class ExploreBloc extends Bloc<ExploreEvent, ExploreState> {
 
   TextEditingController? currentUnitTitleController = TextEditingController();
   TextEditingController? currentUnitQuizController = TextEditingController();
-  TextEditingController? currentUnitDescriptionController = TextEditingController();
+  TextEditingController? currentUnitDescriptionController =
+      TextEditingController();
 
   String? shortInfo;
 
-  ValueChanged<String>? onGuidePreview;
+  Function(String, String)? onGuidePreview;
   ValueChanged<String>? onQuizPressed;
   ValueChanged<double>? onPriceChange;
+  StreamController<String>? _quizCreationStream;
+  StreamSubscription<String>? _quizSubscription;
   Widget? connectGroup;
 
   final LocalStorageManager localStorageManager = LocalStorageManager();
@@ -77,9 +82,25 @@ class ExploreBloc extends Bloc<ExploreEvent, ExploreState> {
     });
   }
 
+  setQuizCreationStream(
+      BuildContext context, StreamController<String> value) {
+    _quizCreationStream = value;
+    _quizSubscription = _quizCreationStream?.stream.listen((data) {
+      debugPrint('Received quiz: ${data}');
+      context.read<QuizzesBloc>().add(AddQuizEvent(QuizModel.fromJson(data)));
+    });
+  }
+
+  disposeQuizSubscription() {
+    _quizSubscription?.cancel();
+  }
+
   UserShortInfo? getshortInfo() {
-    final UserShortInfo dummyUserShortInfo =
-        UserShortInfo(uid: "test", fullName: "Test", username: "Test username", profileImageUrl: "");
+    final UserShortInfo dummyUserShortInfo = UserShortInfo(
+        uid: "test",
+        fullName: "Test",
+        username: "Test username",
+        profileImageUrl: "");
     return UserShortInfo.fromJson(shortInfo ?? dummyUserShortInfo.toJson());
   }
 
@@ -127,7 +148,11 @@ class ExploreBloc extends Bloc<ExploreEvent, ExploreState> {
       if (coverVideoController != null) {
         coverVideoController!.dispose();
       }
-      await picker.pickVideo(source: ImageSource.gallery, maxDuration: const Duration(seconds: 10)).then((value) async {
+      await picker
+          .pickVideo(
+              source: ImageSource.gallery,
+              maxDuration: const Duration(seconds: 10))
+          .then((value) async {
         hideLoader(context);
         await playVideo(value!, context);
       });
@@ -149,16 +174,21 @@ class ExploreBloc extends Bloc<ExploreEvent, ExploreState> {
             controller: (value) async {
               coverVideoController = value;
 
-              final config = VideoFFmpegVideoEditorConfig(coverVideoController!, format: VideoExportFormat.mp4);
-              final FFmpegVideoEditorExecute execute = await config.getExecuteConfig();
+              final config = VideoFFmpegVideoEditorConfig(coverVideoController!,
+                  format: VideoExportFormat.mp4);
+              final FFmpegVideoEditorExecute execute =
+                  await config.getExecuteConfig();
               await ExportService.runFFmpegCommand(
                 execute,
                 onProgress: (stats) {
-                  log(config.getFFmpegProgress(stats.getTime().toInt()).toString());
+                  log(config
+                      .getFFmpegProgress(stats.getTime().toInt())
+                      .toString());
                 },
                 onError: (e, s) => log("Error on export video :($e)"),
                 onCompleted: (file) {
-                  initCompressVideoController(XFile(execute.outputPath), context);
+                  initCompressVideoController(
+                      XFile(execute.outputPath), context);
                   ExportService.dispose();
                 },
               );
@@ -183,7 +213,8 @@ class ExploreBloc extends Bloc<ExploreEvent, ExploreState> {
 
   //============Init CompressVideo============================
 
-  Future<void> initCompressVideoController(XFile file, BuildContext context) async {
+  Future<void> initCompressVideoController(
+      XFile file, BuildContext context) async {
     if (file.path.contains('file:///') || file.path.contains('file://')) {
       file = XFile(file.path.replaceAll('file:///', ''));
     }
@@ -197,7 +228,10 @@ class ExploreBloc extends Bloc<ExploreEvent, ExploreState> {
       minDuration: const Duration(seconds: 1),
       maxDuration: const Duration(seconds: MaxVideoTime),
     );
-    coverVideoController!.initialize(aspectRatio: 9 / 16).then((value) {}).catchError((error) {
+    coverVideoController!
+        .initialize(aspectRatio: 9 / 16)
+        .then((value) {})
+        .catchError((error) {
       if (kDebugMode) {
         print("coverVideoController error $error");
       }
@@ -206,7 +240,8 @@ class ExploreBloc extends Bloc<ExploreEvent, ExploreState> {
 
   //-----------------------------Init Video Controller ------------------------------------------------------------------
 
-  Future<VideoEditorController?> initController(XFile file, BuildContext context) async {
+  Future<VideoEditorController?> initController(
+      XFile file, BuildContext context) async {
     if (file.path.contains('file:///') || file.path.contains('file://')) {
       file = XFile(file.path.replaceAll('file:///', ''));
     }
@@ -229,7 +264,10 @@ class ExploreBloc extends Bloc<ExploreEvent, ExploreState> {
       minDuration: const Duration(seconds: 1),
       maxDuration: const Duration(seconds: MaxVideoTime),
     );
-    coverVideoController!.initialize(aspectRatio: 9 / 16).then((value) {}).catchError((error) {
+    coverVideoController!
+        .initialize(aspectRatio: 9 / 16)
+        .then((value) {})
+        .catchError((error) {
       if (kDebugMode) {
         print("coverVideoController error $error");
       }
@@ -264,7 +302,8 @@ class ExploreBloc extends Bloc<ExploreEvent, ExploreState> {
   }
 
   //---------------------------------Trim and Edit Video------------------------------------------------------------------------
-  Future<void> processVideo(VideoEditorController controller, BuildContext context) async {
+  Future<void> processVideo(
+      VideoEditorController controller, BuildContext context) async {
     showLoader(context);
 
     await controller.generateDefaultCoverThumbnail();
@@ -305,12 +344,15 @@ class ExploreBloc extends Bloc<ExploreEvent, ExploreState> {
   }
 
   //================================================================================================
-  void onReorderVideoForAUnit(int oldIndex, int newIndex, {required int unitIndex}) {
+  void onReorderVideoForAUnit(int oldIndex, int newIndex,
+      {required int unitIndex}) {
     final List<Unit> list = [];
     list.addAll(state.units!);
-    List<Video> videosForAUnit = list.firstWhere((element) => element.unitNumber == unitIndex).videos;
+    List<Video> videosForAUnit =
+        list.firstWhere((element) => element.unitNumber == unitIndex).videos;
 
-    final draggedVideo = (videosForAUnit[oldIndex]).copyWith(videoNumber: newIndex + 1);
+    final draggedVideo =
+        (videosForAUnit[oldIndex]).copyWith(videoNumber: newIndex + 1);
     videosForAUnit.removeAt(oldIndex);
 
     for (int index = 0; index < videosForAUnit.length; index++) {
@@ -367,7 +409,10 @@ class ExploreBloc extends Bloc<ExploreEvent, ExploreState> {
     }
 
     try {
-      list.firstWhere((element) => element.unitNumber == unitIndex).videos.add(unitVideo);
+      list
+          .firstWhere((element) => element.unitNumber == unitIndex)
+          .videos
+          .add(unitVideo);
 
       if (isDuplicate) {
         list
@@ -402,10 +447,12 @@ class ExploreBloc extends Bloc<ExploreEvent, ExploreState> {
   saveTitleAndDescriptionUnit(title, description, int unitIndex) {
     final List<Unit> list = [];
     list.addAll(state.units!);
-    Unit fetchedUnit = list.firstWhere((element) => element.unitNumber == unitIndex);
+    Unit fetchedUnit =
+        list.firstWhere((element) => element.unitNumber == unitIndex);
     int insertIndex = list.indexOf(fetchedUnit);
     list.remove(fetchedUnit);
-    Unit tempUnit = fetchedUnit.copyWith(title: title, description: description);
+    Unit tempUnit =
+        fetchedUnit.copyWith(title: title, description: description);
     list.insert(insertIndex, tempUnit);
 
     emit(
@@ -421,12 +468,17 @@ class ExploreBloc extends Bloc<ExploreEvent, ExploreState> {
   }
 
 //================================================================================================
-  void removeVideoAtIndex(int key, BuildContext context, {required int unitIndex}) {
+  void removeVideoAtIndex(int key, BuildContext context,
+      {required int unitIndex}) {
     final List<Unit> list = [];
     list.addAll(state.units!);
-    list.firstWhere((element) => element.unitNumber == unitIndex).videos.removeAt(key);
+    list
+        .firstWhere((element) => element.unitNumber == unitIndex)
+        .videos
+        .removeAt(key);
     final List<Unit> tempList = [];
-    final videosForAUnit = list.firstWhere((element) => element.unitNumber == unitIndex).videos;
+    final videosForAUnit =
+        list.firstWhere((element) => element.unitNumber == unitIndex).videos;
     List<Video> tempVideos = [];
     for (var element in videosForAUnit) {
       final Video displacedElement = element.copyWith(
@@ -436,8 +488,12 @@ class ExploreBloc extends Bloc<ExploreEvent, ExploreState> {
     }
 
     for (int index = 0; index < list.length; index++) {
-      final displacedElement = list.firstWhere((element) => element.unitNumber == unitIndex).copyWith(
-            videos: list.firstWhere((element) => element.unitNumber == unitIndex).videos
+      final displacedElement = list
+          .firstWhere((element) => element.unitNumber == unitIndex)
+          .copyWith(
+            videos: list
+                .firstWhere((element) => element.unitNumber == unitIndex)
+                .videos
               ..clear()
               ..addAll(tempVideos),
           );
@@ -456,7 +512,10 @@ class ExploreBloc extends Bloc<ExploreEvent, ExploreState> {
 
 //================================================================================================
   void navigateToVideoBuilderScreen(
-      {required BuildContext context, required int unitIndex, Video? videosData, required int videoNumber}) {
+      {required BuildContext context,
+      required int unitIndex,
+      Video? videosData,
+      required int videoNumber}) {
     videosData ??= Video(
         id: '',
         title: '',
@@ -469,7 +528,8 @@ class ExploreBloc extends Bloc<ExploreEvent, ExploreState> {
 
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => VideoBuilderScreen(video: videosData)),
+      MaterialPageRoute(
+          builder: (context) => VideoBuilderScreen(video: videosData)),
     );
   }
 
@@ -487,7 +547,12 @@ class ExploreBloc extends Bloc<ExploreEvent, ExploreState> {
 //================================================================================================
   void addUnit(BuildContext context) {
     int i = state.units!.length + 1;
-    Unit obj = Unit(id: generateId(), unitNumber: i, title: '', description: '', videos: []);
+    Unit obj = Unit(
+        id: generateId(),
+        unitNumber: i,
+        title: '',
+        description: '',
+        videos: []);
     Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => UnitBuilderScreen(unit: obj)),
@@ -509,7 +574,8 @@ class ExploreBloc extends Bloc<ExploreEvent, ExploreState> {
     try {
       if (imagePath == null || imagePath.isEmpty) {
         coverVideoController?.generateDefaultCoverThumbnail();
-        File file = await Unit8ListToFile.bytesToImage(coverVideoController!.selectedCoverVal!.thumbData!);
+        File file = await Unit8ListToFile.bytesToImage(
+            coverVideoController!.selectedCoverVal!.thumbData!);
         imagePath = file.path;
       }
       return imagePath;
@@ -543,9 +609,13 @@ class ExploreBloc extends Bloc<ExploreEvent, ExploreState> {
     guideDescriptionController?.text = parsedCollab.description;
     initController(XFile(parsedCollab.trailerVideo.videoPath), context);
     if (parsedCollab.price!.originalPrice != 0) {
-      context.read<MonetizationBloc>().add(AddPriceEvent(price: parsedCollab.price!.originalPrice));
+      context
+          .read<MonetizationBloc>()
+          .add(AddPriceEvent(price: parsedCollab.price!.originalPrice));
     }
-    context.read<HastagsBloc>().add(AddHashTagsToListEvent(hashTags: parsedCollab.tags));
+    context
+        .read<HastagsBloc>()
+        .add(AddHashTagsToListEvent(hashTags: parsedCollab.tags));
   }
 
   Future<void> pickThumbnail(BuildContext context) async {
@@ -555,7 +625,8 @@ class ExploreBloc extends Bloc<ExploreEvent, ExploreState> {
 
     if (image != null) {
       localImage = image.path;
-      coverVideoController?.generateDefaultCoverThumbnail(file: File(image.path));
+      coverVideoController?.generateDefaultCoverThumbnail(
+          file: File(image.path));
     }
   }
 

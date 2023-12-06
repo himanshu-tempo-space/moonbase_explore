@@ -7,6 +7,7 @@ import 'package:moonbase_explore/bloc/draft/draft_bloc.dart';
 import 'package:moonbase_explore/bloc/explore_bloc.dart';
 import 'package:moonbase_explore/bloc/hashtags/hastags_bloc.dart';
 import 'package:moonbase_explore/bloc/monetization_bloc/monetization_bloc.dart';
+import 'package:moonbase_explore/bloc/quizzes_bloc/quizzes_bloc.dart';
 import 'package:moonbase_explore/bloc/video_bloc/video_bloc.dart';
 import 'package:moonbase_explore/hive/local_storage_manager.dart';
 import 'package:moonbase_explore/model/collab_type.dart';
@@ -50,6 +51,9 @@ class TempoExplore extends StatelessWidget {
         BlocProvider<HastagsBloc>(
           create: (_) => HastagsBloc(),
           child: const CollabHashTagWidget(),
+        ),
+        BlocProvider<QuizzesBloc>(
+          create: (_) => QuizzesBloc(),
         ),
       ],
       child: MaterialApp(

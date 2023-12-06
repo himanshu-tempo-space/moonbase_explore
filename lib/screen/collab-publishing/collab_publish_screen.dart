@@ -1,5 +1,8 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:moonbase_explore/bloc/quizzes_bloc/quizzes_bloc.dart';
 import 'package:provider/provider.dart';
 import 'package:moonbase_explore/bloc/draft/draft_bloc.dart';
 import 'package:moonbase_explore/bloc/explore_bloc.dart';
@@ -14,7 +17,8 @@ import '../../widgets/tempo_text_button.dart';
 import 'hash_tags_widget.dart';
 
 class CollabPublishingScreen extends StatelessWidget {
-  const CollabPublishingScreen({Key? key, required this.collabType}) : super(key: key);
+  const CollabPublishingScreen({Key? key, required this.collabType})
+      : super(key: key);
   final CollabType collabType;
 
   @override
@@ -39,15 +43,27 @@ class CollabPublishingScreen extends StatelessWidget {
                         text: 'Save as draft',
                         enabledBackgroundColor: secondaryColor,
                         onPressed: () async {
-                          context.read<DraftBloc>().add(SaveDraftEvent(context));
+                          context
+                              .read<DraftBloc>()
+                              .add(SaveDraftEvent(context));
                         },
                       ),
                       const SizedBox(height: 5),
                       TempoTextButton(
                         text: 'Publish',
                         onPressed: () async {
-                          final Guide guides = await context.read<DraftBloc>().getDraft(context);
-                          context.read<ExploreBloc>().onGuidePreview!(guides.toJson());
+                          final Guide guides =
+                              await context.read<DraftBloc>().getDraft(context);
+                          //Attatching quizzes
+                          if (context.mounted) {
+                            final quizzes =
+                                context.read<QuizzesBloc>().allQuizzes;
+                            String quizzesJson =
+                                jsonEncode(quizzes.map((e) => e.toMap()).toList());
+                            context
+                                .read<ExploreBloc>()
+                                .onGuidePreview!(guides.toJson(), quizzesJson);
+                          }
 
                           // context.read<ExploreBloc>().onGuidePreview!(guide);
 
