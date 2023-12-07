@@ -84,9 +84,8 @@ class _UnitBuilderScreenState extends State<UnitBuilderScreen> {
                       IconButton(
                           icon: const Icon(Icons.clear),
                           onPressed: () {
-                            context
-                                .read<QuizzesBloc>()
-                                .add(RemoveQuizEvent(unitQuizzes[index].quizId));
+                            context.read<QuizzesBloc>().add(
+                                RemoveQuizEvent(unitQuizzes[index].quizId));
                           })
                     ]),
                   );
@@ -99,11 +98,14 @@ class _UnitBuilderScreenState extends State<UnitBuilderScreen> {
                           .read<QuizzesBloc>()
                           .unitQuizzes(widget.unit?.unitNumber ?? 1)
                           .length -
-                      1 >=
+                      1 <
                   maxQuizzesPerUnit) {
-                context
-                    .read<ExploreBloc>()
-                    .onQuizPressed!(widget.unit?.id ?? '');
+                String guideTitle =
+                    context.read<ExploreBloc>().guideTitleController?.text ??
+                        "";
+
+                context.read<ExploreBloc>().onQuizPressed!(
+                    widget.unit?.unitNumber ?? 1, guideTitle);
               } else {
                 print(
                     "Max number of quizzes for this unit is $maxQuizzesPerUnit");

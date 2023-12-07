@@ -53,7 +53,7 @@ class ExploreBloc extends Bloc<ExploreEvent, ExploreState> {
   String? shortInfo;
 
   Function(String, String)? onGuidePreview;
-  ValueChanged<String>? onQuizPressed;
+  Function(int, String)? onQuizPressed;
   ValueChanged<double>? onPriceChange;
   StreamController<String>? _quizCreationStream;
   StreamSubscription<String>? _quizSubscription;

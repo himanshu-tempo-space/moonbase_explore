@@ -92,10 +92,10 @@ class QuestionModel {
       'prompt': prompt,
       'correctChoiceIndex': correctChoiceIndex,
       'userSelectedChoiceIndex': userSelectedChoiceIndex,
-      'option1': choices.isNotEmpty ? choices[0] : null,
-      'option2': choices.length > 1 ? choices[1] : null,
-      'option3': choices.length > 2 ? choices[2] : null,
-      'option4': choices.length > 3 ? choices[3] : null,
+      'option1': choices.isNotEmpty ? choices[0].choiceText : null,
+      'option2': choices.length > 1 ? choices[1].choiceText : null,
+      'option3': choices.length > 2 ? choices[2].choiceText : null,
+      'option4': choices.length > 3 ? choices[3].choiceText : null,
     };
   }
 }

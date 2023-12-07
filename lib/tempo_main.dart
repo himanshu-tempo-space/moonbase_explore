@@ -12,7 +12,7 @@ import 'package:moonbase_explore/bloc/explore_bloc.dart';
 class TempoExplore extends StatelessWidget {
   final Widget child;
   final Function(String, String)? onGuidedPreview;
-  final Function(String) onQuizPressed;
+  final Function(int, String) onQuizPressed;
   final StreamController<String>? quizCreationStream;
 
   const TempoExplore({

@@ -11,10 +11,10 @@ class QuizzesBloc extends Bloc<QuizzesEvent, QuizzesState> {
   QuizzesBloc() : super(const QuizzesState(quizzes: [])) {
     on<QuizzesEvent>((event, emit) {
       if (event is AddQuizEvent) {
-        final newList = [...(state.quizzes ?? []), event.quiz];
+        List<QuizModel> newList = [...(state.quizzes ?? []), event.quiz];
         emit(state.copyWith(quizzes: newList));
       } else if (event is RemoveQuizEvent) {
-        final newList = [...(state.quizzes ?? [])];
+        List<QuizModel> newList = [...(state.quizzes ?? [])];
 
         int index =
             newList.indexWhere((element) => element.quizId == event.quizId);
@@ -32,6 +32,5 @@ class QuizzesBloc extends Bloc<QuizzesEvent, QuizzesState> {
         <QuizModel>[];
   }
 
-  List<QuizModel> get allQuizzes => state.quizzes ??<QuizModel>[];
-
+  List<QuizModel> get allQuizzes => state.quizzes ?? <QuizModel>[];
 }

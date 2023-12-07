@@ -52,9 +52,6 @@ class TempoExplore extends StatelessWidget {
           create: (_) => HastagsBloc(),
           child: const CollabHashTagWidget(),
         ),
-        BlocProvider<QuizzesBloc>(
-          create: (_) => QuizzesBloc(),
-        ),
       ],
       child: MaterialApp(
         title: 'Flutter Demo',
