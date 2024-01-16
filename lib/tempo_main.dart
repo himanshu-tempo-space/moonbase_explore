@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:moonbase_explore/bloc/explore_bloc.dart';
+
+import 'model/unit_model.dart';
 //
 // void main() {
 //   // runApp(TempoExplore());
@@ -12,7 +14,7 @@ import 'package:moonbase_explore/bloc/explore_bloc.dart';
 class TempoExplore extends StatelessWidget {
   final Widget child;
   final Function(String, String)? onGuidedPreview;
-  final Function(int, String) onQuizPressed;
+  final Function(int, String, Unit) onQuizPressed;
   final StreamController<String>? quizCreationStream;
 
   const TempoExplore({
@@ -28,9 +30,7 @@ class TempoExplore extends StatelessWidget {
     context.read<ExploreBloc>().onGuidePreview = onGuidedPreview;
     context.read<ExploreBloc>().onQuizPressed = onQuizPressed;
     if (quizCreationStream != null) {
-      context
-          .read<ExploreBloc>()
-          .setQuizCreationStream(context, quizCreationStream!);
+      context.read<ExploreBloc>().setQuizCreationStream(context, quizCreationStream!);
     }
     return Directionality(textDirection: TextDirection.ltr, child: child);
   }
