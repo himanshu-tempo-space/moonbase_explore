@@ -423,7 +423,6 @@ class ExploreBloc extends Bloc<ExploreEvent, ExploreState> {
     list.remove(fetchedUnit);
     Unit tempUnit = fetchedUnit.copyWith(title: title, description: description);
     list.insert(insertIndex, tempUnit);
-
     emit(
       state.copyWith(units: list),
     );
