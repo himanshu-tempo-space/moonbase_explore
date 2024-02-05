@@ -50,9 +50,12 @@ class _VideoBuilderScreenState extends State<VideoBuilderScreen> {
       context.read<VideoBloc>().video = widget.video;
       try {
         if (widget.video!.videoDetails.localPath != null) {
-          await context.read<VideoBloc>().initUnitController(XFile(widget.video!.videoDetails.localPath!), context);
-          context.read<VideoBloc>().emit(VideoState(
-              videoPath: widget.video!.videoDetails.localPath!, imagePath: widget.video!.videoDetails.coverImagePath));
+          await context
+              .read<VideoBloc>()
+              .initUnitController(XFile(widget.video!.videoDetails.localPath!), context)
+              .then((value) => context.read<VideoBloc>().emit(VideoState(
+                  videoPath: widget.video!.videoDetails.localPath!,
+                  imagePath: widget.video!.videoDetails.coverImagePath)));
         }
       } catch (e) {
         if (kDebugMode) {

@@ -302,7 +302,7 @@ class ExploreBloc extends Bloc<ExploreEvent, ExploreState> {
   emitGuideDetailState(guideCover, video) {
     emit(state.copyWith(
       exploreThumbnail: guideCover,
-      exploreTrailerVideo: video,
+      exploreTrailerVideo: File("empty string"),
     ));
   }
 
