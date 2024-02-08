@@ -86,7 +86,7 @@ class DraftBloc extends Bloc<DraftEvent, DraftState> {
     }
     exploreBloc.localImage = null;
     final trailerVideo = VideoDetails(
-      videoPath: removeFileString(exploreBloc.state.exploreTrailerVideo!.path),
+      videoPath: "",//removeFileString(exploreBloc.state.exploreTrailerVideo!.path),
       coverImagePath: coverImagePath,
     );
 
