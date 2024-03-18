@@ -14,8 +14,10 @@ import 'package:moonbase_explore/model/collab_type.dart';
 import 'package:moonbase_explore/screen/collab-publishing/collab_publish_screen.dart';
 import 'package:moonbase_explore/screen/collab-publishing/hash_tags_widget.dart';
 import 'package:moonbase_explore/screen/create_guide/create_guide_screen.dart';
+import 'package:moonbase_explore/screen/create_guide/units/unit_builder_screen.dart';
 import 'package:moonbase_explore/screen/create_guide/units/unit_video_picker.dart';
 import 'package:moonbase_explore/screen/drafts/saved_drafts_screen.dart';
+import 'package:moonbase_theme/text_themes/moonbase_text_themes.dart';
 
 Future<void> main() async {
   await Hive.initFlutter();
@@ -52,13 +54,17 @@ class TempoExplore extends StatelessWidget {
           create: (_) => HastagsBloc(),
           child: const CollabHashTagWidget(),
         ),
+        BlocProvider<QuizzesBloc>(
+          create: (_) => QuizzesBloc(),
+      lazy: false,
+        )
       ],
       child: MaterialApp(
         title: 'Flutter Demo',
         theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-          useMaterial3: true,
-        ),
+            colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+            useMaterial3: true,
+            textTheme: MoonbaseTextTheme.lightTextTheme(context)),
         home: const CreateGuideScreen(),
       ),
     );

@@ -9,12 +9,10 @@ class TBackArrow extends StatelessWidget {
   const TBackArrow({
     Key? key,
     this.onTap,
-    this.bgColor = Colors.white,
-    this.arrowColor = purpleColor,
+    this.arrowColor = buttonColor,
   }) : super(key: key);
 
   final Function? onTap;
-  final Color bgColor;
   final Color arrowColor;
 
   @override
@@ -27,18 +25,10 @@ class TBackArrow extends StatelessWidget {
           : () {
               Navigator.of(context).pop();
             },
-      child: Container(
-        padding: const EdgeInsets.all(TSizeConstants.padding10),
-        alignment: Alignment.center,
-        decoration: BoxDecoration(
-          color: bgColor,
-          borderRadius: BorderRadius.circular(TSizeConstants.radius15),
-        ),
-        child: Icon(
-          Platform.isAndroid ? Icons.arrow_back : Icons.arrow_back_ios,
-          size: TSizeConstants.iconSize23,
-          color: arrowColor,
-        ),
+      child: Icon(
+        Platform.isAndroid ? Icons.arrow_back : Icons.arrow_back_ios,
+        size: TSizeConstants.iconSize23,
+        color: arrowColor,
       ),
     );
   }

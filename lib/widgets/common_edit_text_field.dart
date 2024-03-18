@@ -60,13 +60,14 @@ class TTextField extends StatelessWidget {
       autocorrect: false,
       enabled: isEnabled,
       focusNode: focusNode,
-      cursorColor: primaryDarkColor,
+      cursorColor: buttonColor,
+      style: const TextStyle(color: Colors.black),
       textCapitalization: textCapitalization ?? TextCapitalization.none,
       maxLength: maxLength,
       obscureText: (choice == ChoiceEnum.password || choice == ChoiceEnum.confirmPassword) ? true : false,
       maxLines: maxLines,
       keyboardType: keyboardType ?? getKeyboardType(choice),
-      decoration: getInputDecotration(),
+      decoration: getInputDecoration(),
       textInputAction: textInputAction ?? TextInputAction.next,
       validator: validations ?? validators(choice, context),
       onChanged: onChanged,
@@ -80,14 +81,14 @@ class TTextField extends StatelessWidget {
     );
   }
 
-  InputDecoration getInputDecotration() {
+  InputDecoration getInputDecoration() {
     return textFieldInputDecoration.copyWith(
       labelText: "$label${isMandatory ? ' *' : ''}",
       hintText: hintText,
       errorStyle: const TextStyle(height: 0.5),
       labelStyle: labelTextStyle,
       hintStyle: hintTextStyle,
-      focusColor: primaryColor,
+      focusColor: buttonColor,
       contentPadding: contentPadding,
       suffixIcon: suffixIcon ?? const SizedBox(),
       focusedBorder: OutlineInputBorder(

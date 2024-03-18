@@ -128,6 +128,12 @@ const appTitleTextStyle = TextStyle(
   color: Colors.white,
 );
 
+const textFieldW600Size12Poppins = TextStyle(
+  fontSize: TSizeConstants.fontSize12,
+  fontWeight: FontWeight.w600,
+  fontFamily: 'Poppins',
+  color: Colors.white,
+);
 const appSubTitleTextStyle = TextStyle(
   fontSize: TSizeConstants.fontSize14,
   fontWeight: FontWeight.w400,
@@ -163,7 +169,7 @@ const titleTextStyle = TextStyle(
 );
 
 const labelTextStyle = TextStyle(
-  color: secondaryColor,
+  color: Colors.grey,
   fontWeight: FontWeight.w400,
   fontSize: TSizeConstants.fontSize16,
   fontFamily: 'Alata',
@@ -175,9 +181,9 @@ InputDecoration textFieldInputDecoration = InputDecoration(
   floatingLabelBehavior: FloatingLabelBehavior.auto,
   labelStyle: labelTextStyle,
   floatingLabelStyle: TStyles.floatingLabelTextStyle,
-  fillColor: Colors.white.withOpacity(TSizeConstants.backgroundOpacity),
-  hintStyle: hintTextStyle,
   filled: true,
+  fillColor: Colors.white,
+  hintStyle: hintTextStyle,
   contentPadding: const EdgeInsets.symmetric(horizontal: TSizeConstants.padding20, vertical: TSizeConstants.padding20),
   border: TStyles.textFieldBorderStyle,
   focusedBorder: TStyles.textFieldBorderStyle

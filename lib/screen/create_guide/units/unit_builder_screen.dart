@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:moonbase_explore/bloc/explore_bloc.dart';
@@ -36,8 +37,10 @@ class _UnitBuilderScreenState extends State<UnitBuilderScreen> {
 
   setInitialValues() {
     if (widget.unit != null) {
-      context.read<ExploreBloc>().currentUnitTitleController!.text = widget.unit!.title;
-      context.read<ExploreBloc>().currentUnitDescriptionController!.text = widget.unit!.description;
+      context.read<ExploreBloc>().currentUnitTitleController!.text =
+          widget.unit!.title;
+      context.read<ExploreBloc>().currentUnitDescriptionController!.text =
+          widget.unit!.description;
     }
   }
 
@@ -56,14 +59,15 @@ class _UnitBuilderScreenState extends State<UnitBuilderScreen> {
           ),
           const SizedBox(height: 20),
           DescriptionTextField(
-            controller: context.read<ExploreBloc>().currentUnitDescriptionController!,
+            controller:
+                context.read<ExploreBloc>().currentUnitDescriptionController!,
             lableText: 'Description',
             hintText: 'The description of the unit...',
           ),
           const SizedBox(height: 20),
           BlocBuilder<QuizzesBloc, QuizzesState>(builder: (context, state) {
-            List<QuizModel> unitQuizzes =
-                BlocProvider.of<QuizzesBloc>(context).unitQuizzes(widget.unit?.unitNumber ?? 1);
+            List<QuizModel> unitQuizzes = BlocProvider.of<QuizzesBloc>(context)
+                .unitQuizzes(widget.unit?.unitNumber ?? 1);
 
             return ListView.builder(
                 physics: const NeverScrollableScrollPhysics(),
@@ -75,18 +79,20 @@ class _UnitBuilderScreenState extends State<UnitBuilderScreen> {
                       const Icon(Icons.question_answer),
                       const SizedBox(width: 10),
                       Expanded(
-                        child: TText(unitQuizzes[index].quizTitle, variant: TypographyVariant.body),
+                        child: TText(unitQuizzes[index].quizTitle,
+                            variant: TypographyVariant.body),
                       ),
                       IconButton(
                           icon: const Icon(Icons.clear),
                           onPressed: () {
-                            context.read<QuizzesBloc>().add(RemoveQuizEvent(unitQuizzes[index].quizId));
+                            context.read<QuizzesBloc>().add(
+                                RemoveQuizEvent(unitQuizzes[index].quizId));
                           })
                     ]),
                   );
                 });
           }),
-          QuizButton(
+          /*        QuizButton(
             onPressed: () {
               Unit? fetchedUnit;
               const maxQuizzesPerUnit = 3;
@@ -106,10 +112,12 @@ class _UnitBuilderScreenState extends State<UnitBuilderScreen> {
                 }
                 context.read<ExploreBloc>().onQuizPressed!(widget.unit?.unitNumber ?? 1, guideTitle, fetchedUnit!);
               } else {
-                print("Max number of quizzes for this unit is $maxQuizzesPerUnit");
+                if (kDebugMode) {
+                  print("Max number of quizzes for this unit is $maxQuizzesPerUnit");
+                }
               }
             },
-          ),
+          ),*/
         ],
       ),
     );
@@ -132,9 +140,11 @@ class _UnitBuilderScreenState extends State<UnitBuilderScreen> {
                   children: [
                     _buildForm(),
                     heightBox20(),
-                    const TText('Add your videos for the unit here', variant: TypographyVariant.bodyLarge),
-                    heightBox20(),
-                    UnitsVideoGridView(int.parse(widget.unit?.unitNumber.toString() ?? '1')),
+             /*       const TText('Add your videos for the unit here',
+                        variant: TypographyVariant.bodyLarge),
+                    heightBox20(),*/
+                    UnitsVideoGridView(
+                        int.parse(widget.unit?.unitNumber.toString() ?? '1')),
                   ],
                 ),
               ),
@@ -152,8 +162,14 @@ class _UnitBuilderScreenState extends State<UnitBuilderScreen> {
                   onPressed: () {
                     if (_formKey.currentState!.validate()) {
                       context.read<ExploreBloc>().saveTitleAndDescriptionUnit(
-                          context.read<ExploreBloc>().currentUnitTitleController!.text,
-                          context.read<ExploreBloc>().currentUnitDescriptionController!.text,
+                          context
+                              .read<ExploreBloc>()
+                              .currentUnitTitleController!
+                              .text,
+                          context
+                              .read<ExploreBloc>()
+                              .currentUnitDescriptionController!
+                              .text,
                           widget.unit?.unitNumber ?? 1);
                       context.read<ExploreBloc>().saveUnitDetails(context);
                     }

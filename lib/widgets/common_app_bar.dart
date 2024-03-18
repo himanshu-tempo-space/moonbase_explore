@@ -52,14 +52,14 @@ class TAppBar extends StatelessWidget {
       child: AppBar(
         centerTitle: false,
         actions: buildBackButton ? actions : null,
-        backgroundColor: primaryColor,
+        backgroundColor: backgroundColor,
         titleSpacing: buildBackButton ? 0.0 : null,
         automaticallyImplyLeading: false,
-        systemOverlayStyle: TempoThemes.systemOverlayStyle,
+
         leading: buildBackButton
             ? TBackArrow(
                 onTap: onPressed,
-                bgColor: primaryColor,
+
               )
             : null,
         elevation: 0.0,

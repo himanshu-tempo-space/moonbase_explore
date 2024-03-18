@@ -1,9 +1,10 @@
 //Backgrounds
 import 'package:flutter/material.dart';
+import 'package:moonbase_theme/colors/colors.dart';
 
-const primaryColor = Color(0xFFFBC386);
-const primaryDarkColor = Color(0xFFF35307);
-const secondaryColor = Color(0xFF20454E);
+const primaryColor = LightThemePalette.primaryColor;
+const primaryDarkColor =LightThemePalette.primaryColorDark;
+const secondaryColor = LightThemePalette.secondaryColor;
 const buttonRedColor = Color(0xFFFB655F);
 const noDataYellowColor = Color(0xFFFFC847);
 const purpleColor = Color(0xFF5B1B72);
@@ -19,5 +20,7 @@ const Color meChatBubbleColor = primaryColor;
 const Color receivedChatBubbleColor = Colors.white;
 const Color participantContainerColor = Color(0xffFFECEC);
 Color noDataDarkColor = primaryDarkColor.withOpacity(0.70);
+Color collabBuilderBackgroundColor = LightThemePalette.surfaceColor;
+const buttonColor=Colors.white;
 
-const Color collabBuilderBackgroundColor = Colors.white;
+const backgroundColor=LightThemePalette.onBackgroundColor;

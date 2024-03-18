@@ -5,18 +5,17 @@ import '../app_constants/app_text_style.dart';
 import '../app_constants/size_constants.dart';
 import 'common_app_bar.dart';
 
-
 class BgTempoScreen extends StatelessWidget {
-  const BgTempoScreen({
-    Key? key,
-    required this.pageTitle,
-    required this.child,
-    this.actions,
-    this.floatingActionButton,
-    this.onBackButtonPressed,
-    this.buildBackButton = true,
-      this.resizeToAvoidBottomInset = false
-  }) : super(key: key);
+  const BgTempoScreen(
+      {Key? key,
+      required this.pageTitle,
+      required this.child,
+      this.actions,
+      this.floatingActionButton,
+      this.onBackButtonPressed,
+      this.buildBackButton = true,
+      this.resizeToAvoidBottomInset = false})
+      : super(key: key);
 
   final String pageTitle;
   final Widget child;
@@ -28,17 +27,11 @@ class BgTempoScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
-    return WillPopScope(
-      onWillPop:buildBackButton? ()async{
-        if(onBackButtonPressed!=null){
-          onBackButtonPressed!();
-        }
-        return true;
-      }:()async=>true,
+    return PopScope(
+      canPop: false,
       child: Scaffold(
         resizeToAvoidBottomInset: resizeToAvoidBottomInset,
-        backgroundColor: primaryColor,
+        backgroundColor: backgroundColor,
         appBar: PreferredSize(
           preferredSize: TSizeConstants.prefferdSize,
           child: TAppBar(
@@ -49,14 +42,14 @@ class BgTempoScreen extends StatelessWidget {
           ),
         ),
         body: GestureDetector(
-          onTap: ()=>FocusManager.instance.primaryFocus?.unfocus(),
+          onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
           child: ClipRRect(
             borderRadius: TStyles.borderRadius30,
             child: Container(
               width: MediaQuery.of(context).size.width,
-              height:MediaQuery.of(context).size.height,
-              decoration: const BoxDecoration(
-                color: Colors.white,
+              height: MediaQuery.of(context).size.height,
+              decoration: BoxDecoration(
+                color: collabBuilderBackgroundColor,
                 borderRadius: TStyles.borderRadius30,
               ),
               child: child,

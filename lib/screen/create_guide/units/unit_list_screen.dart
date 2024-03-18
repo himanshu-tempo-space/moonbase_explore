@@ -11,9 +11,12 @@ import 'package:moonbase_explore/widgets/base_tempo_screen.dart';
 import 'package:top_snackbar_flutter/custom_snack_bar.dart';
 import 'package:top_snackbar_flutter/top_snack_bar.dart';
 
+import '../../../app_constants/app_colors.dart';
+import '../../../app_constants/app_text_style.dart';
 import '../../../model/video_model.dart';
 import '../../../utils/common_no_data_widget.dart';
 import '../../../utils/utility.dart';
+import '../../../widgets/custom_floating_action_btn.dart';
 import '../../../widgets/tempo_text_button.dart';
 import '../../collab-publishing/collab_publish_screen.dart';
 import 'all_units_view_builder.dart';
@@ -39,8 +42,11 @@ class _UnitListScreenState extends State<UnitListScreen> {
   @override
   Widget build(BuildContext context) {
     return BgTempoScreen(
-      pageTitle: 'Add Units',
+      pageTitle: 'Units',
       resizeToAvoidBottomInset: true,
+      floatingActionButton: CustomFloatingActionButton(
+        onPressed: _onPressNext,
+      ),
       child: Padding(
         padding: const EdgeInsets.all(TSizeConstants.padding10),
         child: BlocBuilder<ExploreBloc, ExploreState>(
@@ -51,43 +57,62 @@ class _UnitListScreenState extends State<UnitListScreen> {
                     ? AllUnitsViewBuilder(
                         allUnits: state.units ?? [],
                       )
-                    : Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
+                    : Stack(
                         children: [
-                          const TempoNoDataWidget(
-                            text:
-                                '''Hey there! It looks like there are no units added to this guide yet. To add a unit, simply click on the "Add first unit" button and start creating your guide.''',
+                          const Center(
+                            child: TempoNoDataWidget(
+                              text:
+                                  '''Hey there! It looks like there are no units added to this guide yet. To add a unit, simply click on the "Add first unit" button and start creating your guide.''',
+                            ),
                           ),
-                          const SizedBox(
-                            height: 20,
+                          InkWell(
+                            onTap: () => Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => UnitBuilderScreen(
+                                      unit: Unit(
+                                          id: '',
+                                          unitNumber: 1,
+                                          title: '',
+                                          description: '',
+                                          videos: []))),
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 30.0, vertical: 10),
+                              child: Column(
+                                children: [
+                                  Container(
+                                      height: 60,
+                                      width: 60,
+                                      decoration: const BoxDecoration(
+                                          shape: BoxShape.circle,
+                                          color: primaryColor),
+                                      child: const Icon(Icons.add)),
+                                  const Text(
+                                    'New unit',
+                                    style: textFieldW600Size12Poppins,
+                                  ),
+                                ],
+                              ),
+                            ),
                           ),
-                          TempoTextButton(
-                            text: 'Add first unit',
-                            width: 0,
-                            radius: 15,
-                            onPressed: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => UnitBuilderScreen(
-                                        unit: Unit(id: '', unitNumber: 1, title: '', description: '', videos: []))),
-                              );
-                            },
-                          )
+                          // TempoTextButton(
+                          //   text: 'Add first unit',
+                          //   width: 0,
+                          //   radius: 15,
+                          //   onPressed: () {
+                          //     Navigator.push(
+                          //       context,
+                          //       MaterialPageRoute(
+                          //           builder: (context) => UnitBuilderScreen(
+                          //               unit: Unit(id: '', unitNumber: 1, title: '', description: '', videos: []))),
+                          //     );
+                          //   },
+                          // )
                         ],
                       ),
               ),
-              Column(
-                mainAxisSize: MainAxisSize.max,
-                children: [
-                  state.units!.isNotEmpty? TempoTextButton(
-                    text: 'Next',
-                    onPressed: _onPressNext,
-                  ):const SizedBox(),
-
-                  const SizedBox(height: 10,)
-                ],
-              )
             ],
           ),
         ),

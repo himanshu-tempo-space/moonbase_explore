@@ -66,6 +66,7 @@ class _DescriptionTextBoxState extends State<DescriptionTextField> {
       }
           : null,
       cursorColor: primaryDarkColor,
+      style: const TextStyle(color: Colors.black),
       decoration: textFieldInputDecoration.copyWith(
         labelText: widget.lableText,
         hintText: widget.hintText,
@@ -76,7 +77,7 @@ class _DescriptionTextBoxState extends State<DescriptionTextField> {
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(TSizeConstants.textFieldBorderRadius),
           borderSide: const BorderSide(
-            color: primaryDarkColor,
+            color: primaryColor,
             width: TSizeConstants.borderFocusedWidth,
           ),
         ),
